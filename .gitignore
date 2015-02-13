@@ -1,0 +1,10 @@
+*.xml
+statusDashboardTool/
+
+myinfo.sh
+
+platformMonitoringDashboard/backups/statusDashboardTool_1.0.zip
+
+platformMonitoringDashboard/backups/statusDashboardTool_2.0.zip
+
+*.log
