@@ -11,21 +11,21 @@
 #----------------------------------------------------------------------
 function checkToken  ###Check if token exists
 {
-#reading user config
-source ../conf/user.cfg
-T_HOME=$TOOL_HOME
-CUSER=$CONF_USER
+    #reading user config
+    source ../conf/user.cfg
+    T_HOME=$TOOL_HOME
+    CUSER=$CONF_USER
 
-TOKEN=$(cat $T_HOME/conf/token)
-echo "- INFO : $LINENO: $PROGNAME : Checking authentication token "
+    TOKEN=$(cat $T_HOME/conf/token)
+    echo "- INFO : $LINENO: $PROGNAME : Checking authentication token "
 
-if [ ! $TOKEN ]; then
-echo "- WARN : $LINENO: $PROGNAME : Token not found, logging in using configured parameters"
-./loginConfluence.sh
-else
-echo "- OK : $LINENO: $PROGNAME : Token exists "
-# _TODO_ check age of token if not expired
-fi
+    if [ ! $TOKEN ]; then
+        echo "- WARN : $LINENO: $PROGNAME : Token not found, logging in using configured parameters"
+        ./loginConfluence.sh
+    else
+        echo "- OK : $LINENO: $PROGNAME : Token exists "
+        # _TODO_ check age of token if not expired
+    fi
 }
 
 #----------------------------------------------------------------------

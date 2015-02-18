@@ -226,7 +226,7 @@ function checkToken  ###Check if token exists
 PROGNAME=$(basename $0)
 
 echo "" #new row
-echo "- Info : $LINENO: $PROGNAME : START "
+echo "- Info : $LINENO: $PROGNAME : START editing page ..."
 echo "- Info : $LINENO: $PROGNAME : info : Reading user configuration. "
 
 source ../conf/user.cfg

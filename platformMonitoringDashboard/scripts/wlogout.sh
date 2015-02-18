@@ -15,27 +15,23 @@ function error_exit #Exits script in case of failure
 exit 1
 }
 #----------------------------------------------------------------------
-function checkLogin
+function checkLogin #checks login after ./loginConfluence.sh run
 {
-source ../conf/user.cfg
-T_HOME=$TOOL_HOME
+    source ../conf/user.cfg
+    T_HOME=$TOOL_HOME
 
-TOKEN=`cat $T_HOME/conf/token`
+    TOKEN=`cat $T_HOME/conf/token`>&2
 
-###Save token
-if [ ! $TOKEN ]; then
-
-ERROR_RESPONSE=$(xmllint --xpath "//faultstring/text()" $T_HOME/logs/messages/responseLogin.xml| awk -F $':' '{print $2 }')
-echo "- ERROR : $LINENO: $PROGNAME : INCORRECT LOGIN !!! "
-echo "- ERROR : $LINENO: $PROGNAME : Confluence returned error: $ERROR_RESPONSE"
-exit
-else
-echo "- Info : $LINENO: $PROGNAME: Token exists: $TOKEN"
-fi
-
+    ###Save token
+    if [ ! $TOKEN ]; then
+        ERROR_RESPONSE=$(xmllint --xpath "//faultstring/text()" $T_HOME/logs/messages/responseLogin.xml| awk -F $':' '{print $2 }')
+        echo "- ERROR : $LINENO: $PROGNAME : INCORRECT LOGIN !!! "
+        echo "- ERROR : $LINENO: $PROGNAME : Confluence returned error: $ERROR_RESPONSE"
+        exit
+    else
+        echo "- Info : $LINENO: $PROGNAME: Token exists: $TOKEN"
+    fi
 }
-
-
 #----------------------------------------------------------------------
 function checkToken  ###Check if token exists
 {
@@ -44,8 +40,8 @@ function checkToken  ###Check if token exists
     T_HOME=$TOOL_HOME
     CUSER=$CONF_USER
 
-    TOKEN=$(cat $T_HOME/conf/token)
     echo "- INFO : $LINENO: $PROGNAME : Checking authentication token "
+    TOKEN=$(cat $T_HOME/conf/token)>&2
 
     if [ ! $TOKEN ]; then
         echo "- WARN : $LINENO: $PROGNAME : Token not found, logging in using configured parameters"
@@ -53,17 +49,18 @@ function checkToken  ###Check if token exists
         checkLogin
     else
         echo "- OK : $LINENO: $PROGNAME : Token exists "
-    # _TODO_ check age of token if not expired
+        # _TODO_ check age of token if not expired
     fi
 }
 #--------------------------------------------------------------------
 #----------------------------------------------------------------------
 source ../conf/user.cfg
 CUSER=$CONF_USER
-TOKEN=$(cat $T_HOME/conf/token)T_HOME=$TOOL_HOME
 T_HOME=$TOOL_HOME
 
 checkToken  #check authentication token
+
+TOKEN=$(cat $T_HOME/conf/token)
 
 PAGE_NAME="State of platform watch"
 PAGE="WATCH"
@@ -102,4 +99,4 @@ curl -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: https://confluen
 ./historyUpdate.sh "$PAGE_COMMENT"
 echo "- Info : $LINENO: $PROGNAME : END "
 
-./logoutConfluence.sh
+#./logoutConfluence.sh

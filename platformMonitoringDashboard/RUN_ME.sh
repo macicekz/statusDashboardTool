@@ -17,29 +17,47 @@ case $1 in
     ;;
    -help) less $TOOL_HOME/doc/help.txt
     ;;
-   -s)  cd $TOOL_HOME/scripts
+   -s)
+        cd $TOOL_HOME/scripts
     	./setup.sh -u
         ./setup.sh -S
     ;;
+    -S)
+        cd $TOOL_HOME/scripts
+        ./setup.sh -S
+    ;;
+
    -Wizz)
         cd $TOOL_HOME/scripts
         ./wizzard.sh
     ;;
    -wod)
+            echo "" #new row
+            echo "- Info : $LINENO: $PROGNAME : Loggin into ./logs/wlogin.log "
+            echo "" #new row
             cd $TOOL_HOME/scripts
             ./wlogin.sh > ../logs/wlogin.log
     ;;
    -wood)
+            echo "" #new row
+            echo "- Info : $LINENO: $PROGNAME : Loggin into ./logs/wlogout.log "
+            echo "" #new row
             cd $TOOL_HOME/scripts
             ./wlogout.sh > ../logs/wlogout.log
     ;;
    -green)
-	   cd $TOOL_HOME/scripts
-	  ./allOK.sh  > ../logs/allOK.log
+            echo "" #new row
+            echo "- Info : $LINENO: $PROGNAME : Loggin into ./logs/allOK.log "
+            echo "" #new row
+            cd $TOOL_HOME/scripts
+            ./allOK.sh  > ../logs/allOK.log
     ;;
-   -grey)  
-	   cd $TOOL_HOME/scripts
-          ./allGrey.sh > ../logs/allGrey.log
+   -grey)
+            echo "" #new row
+            echo "- Info : $LINENO: $PROGNAME : Loggin into ./logs/allGrey.log "
+            echo "" #new row
+            cd $TOOL_HOME/scripts
+            ./allGrey.sh > ../logs/allGrey.log
    ;;
    -list)   cat $TOOL_HOME/doc/listPage.sh
     ;;

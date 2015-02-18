@@ -8,3 +8,13 @@ platformMonitoringDashboard/backups/statusDashboardTool_1.0.zip
 platformMonitoringDashboard/backups/statusDashboardTool_2.0.zip
 
 *.log
+
+platformMonitoringDashboard/conf/user.cfg
+
+statusDashboardTool_2.0/conf/user.cfg
+
+platformMonitoringDashboard/conf/user.cfg
+
+platformMonitoringDashboard/scripts/updateTree_backup.sh
+
+platformMonitoringDashboard/scripts/wizzard_backup.sh

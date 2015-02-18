@@ -16,5 +16,3 @@
         - run "./RUN_ME.sh" to obtain basic functionalities of a tool
         - run "./RUN_ME.sh -Wizz" to start wizard which will guide you during editing of confluence status dashboard.
 
-
-testicek

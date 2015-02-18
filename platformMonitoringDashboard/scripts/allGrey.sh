@@ -26,7 +26,7 @@
 ./summarys.sh -p PLATFORM -s UNKNOWN -D NA1 -H
 ./summarys.sh -p COMPONENTS -s UNKNOWN -D NA1 -H
 ./summarys.sh -p SUBCOMPONENTS -s UNKNOWN -D NA1 -H
-./editPage.sh -p WEBS -s UNKNOWN -D ALL -H
+./editWebs.sh -w ALL -s UNKNOWN -H
 
 ./logoutConfluence.sh
 

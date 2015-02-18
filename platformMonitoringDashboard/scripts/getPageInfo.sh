@@ -140,12 +140,11 @@ case $1 in
         -i)
             PAGE_ID=$2
             echo "- Info : $LINENO: $PROGNAME : Retreiving informations for given Page ID is $PAGE_ID "
-            convertPageName
             getByID ####Obtain page
         ;;
         -n)
             PAGE=$2
-            echo "- Info : $LINENO: $PROGNAME : Retreiving informations for given Page NAME is $PAGE_ID "
+            echo "- Info : $LINENO: $PROGNAME : Retreiving informations for given Page NAME is $PAGE "
             convertPageName
             getByName  ####Obtain page
         ;;

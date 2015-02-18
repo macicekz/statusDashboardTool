@@ -14,7 +14,6 @@ function convertPageName #Updates Page Name according given parameter
 {
 source ../conf/config.cfg
 case $PAGE in
-        WEBS) PAGE_NAME=$WEBS    ;;
         PLATFORM) PAGE_NAME=$PLATFORM   ;;
         COMPONENTS) PAGE_NAME=$COMPONENTS    ;;
         SUBCOMPONENTS) PAGE_NAME=$SUBCOMPONENTS   ;;
@@ -124,21 +123,6 @@ case $DC in
     "")  error_exit "$LINENO: NO DATACETER given "
     ;;
     esac
-
-
-#_TODO_ set state for all datacenters at once
-#ALL)
-#URL_NA1=$PAGE_URL
-#STATE_NA1="GOODDATA.COM"
-#COLOUR_NA1=$COLOUR
-#URL_NA2=$PAGE_URL
-#STATE_NA2="DEVPORTAL"
-#COLOUR_NA2=$COLOUR
-#URL_EU1=$PAGE_URL
-#STATE_EU1="DEVPORTAL"
-#COLOUR_EU1=$COLOUR
-
-
 }
 #----------------------------------------------------------------------
 
