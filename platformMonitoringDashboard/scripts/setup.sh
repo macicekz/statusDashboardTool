@@ -19,8 +19,16 @@ case $1 in
     CONF_USER=$a
 
     echo "Please, enter your confluence user password :"
-    read b
-    CONF_PASSWORD=$b
+    while IFS= read -p "$prompt" -r -s -n 1 char
+        do
+            if [[ $char == $'\0' ]]
+            then
+                break
+            fi
+            prompt='*'
+            PASSWORD+="$char"
+    done
+    CONF_PASSWORD=$PASSWORD
 
     echo "TOOL_HOME=$TOOL_HOME" >> $TOOL_HOME/conf/user.cfg
     echo "CONF_USER=$CONF_USER" > $TOOL_HOME/conf/user.cfg

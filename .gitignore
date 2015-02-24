@@ -18,3 +18,5 @@ platformMonitoringDashboard/conf/user.cfg
 platformMonitoringDashboard/scripts/updateTree_backup.sh
 
 platformMonitoringDashboard/scripts/wizzard_backup.sh
+
+platformMonitoringDashboard/conf/user.cfg
