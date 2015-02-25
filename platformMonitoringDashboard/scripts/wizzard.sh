@@ -544,8 +544,11 @@ do
 
 shift
 done
+
+
+./logoutConfluence.sh
+
 echo "" #new row
 echo "Bye bye ... "
 
-./logoutConfluence.sh
 

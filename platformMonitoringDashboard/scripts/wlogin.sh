@@ -111,8 +111,6 @@ echo $REQUEST>../data/requestUpdatePage_WATCH.xml
 
 curl -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: https://confluence.intgdc.com/plugins/servlet/soap-axis1/confluenceservice-v2/ConfluenceSoapService/updatePage"  -d @../data/requestUpdatePage_WATCH.xml -X POST https://confluence.intgdc.com/plugins/servlet/soap-axis1/confluenceservice-v2>../data/responseUpdatePage_WATCH.xml
 
-#Update history
-./historyUpdate.sh "$PAGE_COMMENT"
 
 getCurrent  #Getting current Values on Watch page
 
@@ -136,6 +134,10 @@ else
     echo "- Info: $LINENO: $PROGNAME: No user previously logged in  "
 fi
 #------------ADDED
+
+#Update history
+./historyUpdate.sh "$PAGE_COMMENT"
+
 
 echo "- Info: $LINENO: $PROGNAME: END "
 

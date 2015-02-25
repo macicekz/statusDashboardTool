@@ -20,3 +20,7 @@ platformMonitoringDashboard/scripts/updateTree_backup.sh
 platformMonitoringDashboard/scripts/wizzard_backup.sh
 
 platformMonitoringDashboard/conf/user.cfg
+
+platformMonitoringDashboard/tree.list
+
+platformMonitoringDashboard/conf/user.cfg

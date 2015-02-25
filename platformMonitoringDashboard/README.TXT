@@ -1,7 +1,7 @@
 1. Installation :
 
 	- Open terminal - usually placed on Applications/utilities/Terminal.app
-	- Goto the tool folder. It should be named as statusDashboardTool_2.0
+	- Goto the tool folder. It should be named as statusDashboardTool_X.Y or platformMonitoringDashboard
         - Run main script: ./RUN_ME.sh
 	- If everything goes well, continue with basic functionalities
 
