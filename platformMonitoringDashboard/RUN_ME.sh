@@ -4,6 +4,27 @@
 # Fri Jan 23 08:00:00 CET 2015
 #   - First draft.
 # -----------------------------
+# Fri Feb 13 2015
+#   - 2.0
+#   - First stable release
+# -----------------------------
+# Tue Feb 18 2015
+#   - 2.1.
+#   - Fix for update of Webs
+#   logging out previously logged Watch
+#   - Minor bug fixes
+# -----------------------------
+# Tue Feb 24 2015
+#   - Hidden pasword during entering
+#   - Logging off previosly logged watch
+#   - Minor bug fixes
+# -----------------------------
+# Wed Feb 25 2015
+#   - Order of logging out previously logged Watch
+#   - Minor bug fixes
+# -----------------------------
+
+
 
 TOOL_HOME=$(pwd)
 

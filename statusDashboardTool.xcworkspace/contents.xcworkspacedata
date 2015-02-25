@@ -4,7 +4,4 @@
    <FileRef
       location = "group:platformMonitoringDashboard">
    </FileRef>
-   <FileRef
-      location = "group:statusDashboardTool_2.0">
-   </FileRef>
 </Workspace>
