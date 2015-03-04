@@ -124,7 +124,7 @@ function setStateProperties  #sets colour, page comment and comment according to
                 UNKNOWN)
                     COLOUR="grey"
                     STATE="-"
-                    PAGE_COMMENT=""
+                    PAGE_COMMENT="$PAGE_COMMENT_UNKNOWN"
                     URL_NAME="-"
             ;;
 
