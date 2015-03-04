@@ -23,7 +23,11 @@
 #   - Order of logging out previously logged Watch
 #   - Minor bug fixes
 # -----------------------------
-
+# Wed Mar 04 2015
+#   - setup for missing directories added
+#   - some dummy messages removed/updated
+#   - Minor Bug fixes
+# -----------------------------
 
 
 TOOL_HOME=$(pwd)

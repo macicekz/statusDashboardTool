@@ -34,6 +34,10 @@ case $1 in
     echo "CONF_USER=$CONF_USER" > $TOOL_HOME/conf/user.cfg
     echo "CONF_PASSWORD=$CONF_PASSWORD" >> $TOOL_HOME/conf/user.cfg
     echo "TOOL_HOME=$TOOL_HOME" >> $TOOL_HOME/conf/user.cfg
+
+    mkdir $TOOL_HOME/logs
+    mkdir $TOOL_HOME/data
+    mkdir $TOOL_HOME/logs/messages
 ;;
 -S)
     PRODUCTION=$(grep "SPACE_NAME=" $TOOL_HOME/conf/config.cfg | awk  -F $'=' '{print $2}' )
