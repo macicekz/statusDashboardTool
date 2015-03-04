@@ -128,11 +128,14 @@ if [ $PREVIOUS_USER ]; then
     curl -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: https://confluence.intgdc.com/plugins/servlet/soap-axis1/confluenceservice-v2/ConfluenceSoapService/updatePage"  -d @../data/requestUpdatePage_WATCH.xml -X POST https://confluence.intgdc.com/plugins/servlet/soap-axis1/confluenceservice-v2>../data/responseUpdatePage_WATCH.xml
 
     #Update history because of automatical loggou
-    ./historyUpdate.sh "$PAGE_COMMENT_2"
-    echo "- Info: $LINENO: $PROGNAME: User $PREVIOUS_USER has been automaticaly logged out."
-else
+
+./historyUpdate.sh "$PAGE_COMMENT_2"
+
+echo "- Info: $LINENO: $PROGNAME: User $PREVIOUS_USER has been automaticaly logged out."
+    else
     echo "- Info: $LINENO: $PROGNAME: No user previously logged in  "
-fi
+    fi
+
 #------------ADDED
 
 #Update history
