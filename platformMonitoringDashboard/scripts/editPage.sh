@@ -5,7 +5,7 @@
 #  Sets Up page according to given parameters
 #
 #  ./editPage.sh [-]pDsTHhnI
-#   -p [PAGE_NAME]  -D [Data Center] -s [STATE] -T [TICKET_URL parenthness has to been used "https:/#jira.intgdc.com/browse/WA-4071"] -H/h [update HISTORY Y/N] -n [NOTE added to comment] -I #[PAGE_ID] -l [List all possible parameter values]
+#   -p [PAGE_NAME]  -D [Data Center] -s [STATE] -T [TICKET_URL parenthness has to been used "https:/#jira.intgdc.com/browse/WA-4071"] -H/h [do not update HISTORY] -n [NOTE added to comment] -I #[PAGE_ID] -l [List all possible parameter values]
 #
 #  Created by Zdenek Macicek on 23.01.15.
 #
@@ -108,13 +108,13 @@ function setStateProperties  #sets colour, page comment and comment according to
                     PAGE_COMMENT="$PAGE_COMMENT_UNKNOWN"
                     URL_NAME="-"
             ;;
-
-                #_TODO_ RELEASE
-                #RELEASE) COLOUR="grey"
-                #NA1="-"
-                #STATE="UNKNOWN"
-                #PAGE_COMMENT=$RELEASE_COMMENT_START
-                #;;
+                RELEASE)
+                    COLOUR="red"
+                    STATE="RELEASE"
+                    URL_NAME=$(echo $TICKET_URL|awk  -F $'/' '{print $6}')
+                    PAGE_COMMENT="$PAGE_COMMENT_RELEASE"
+                    CUSER="$CONF_USER"
+             ;;
             esac
 }
 #----------------------------------------------------------------------
@@ -199,7 +199,7 @@ function error_exit #Exits script in case of failure
 echo "" #new row
 echo "- ERROR : ${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
 echo "" #new row
-echo "USAGE: ./editPage.sh [-]pDsTHhnI -p [PAGE_NAME]  -D [Data Center] -s [STATE] -T [TICKET_URL parenthness has to been used \"https:/#jira.intgdc.com/browse/WA-4071\"] -H/h [update HISTORY Y/N] -n [NOTE added to comment] -I #[PAGE_ID] -l [List all possible parameter values]]"
+echo "USAGE: ./editPage.sh [-]pDsTHhnI -p [PAGE_NAME]  -D [Data Center] -s [STATE] -T [TICKET_URL parenthness has to been used \"https:/#jira.intgdc.com/browse/WA-4071\"] -H/h [do not update HISTORY] -n [NOTE added to comment] -I #[PAGE_ID] -l [List all possible parameter values]]"
 exit 1
 }
 #----------------------------------------------------------------------

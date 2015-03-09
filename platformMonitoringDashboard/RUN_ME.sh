@@ -28,7 +28,10 @@
 #   - some dummy messages removed/updated
 #   - Minor Bug fixes
 # -----------------------------
-
+# Mon Mar 09 2015
+#   - Release handling added
+#   - Minor Bug fixes
+# -----------------------------
 
 TOOL_HOME=$(pwd)
 

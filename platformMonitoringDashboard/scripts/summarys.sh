@@ -54,12 +54,13 @@ function setStateProperties  #sets colour, page comment and comment according to
                     PAGE_COMMENT="$PAGE_COMMENT_UNKNOWN"
                     URL_NAME="-"
             ;;
-                #_TODO_ RELEASE
-                #RELEASE) COLOUR="grey"
-                #NA1="-"
-                #STATE="UNKNOWN"
-                #PAGE_COMMENT=$RELEASE_COMMENT_START
-                #;;
+                RELEASE)
+                    COLOUR="red"
+                    STATE="RELEASE"
+                    URL_NAME=$(echo $TICKET_URL|awk  -F $'/' '{print $6}')
+                    PAGE_COMMENT="$PAGE_COMMENT_RELEASE"
+                    CUSER="$CONF_USER"
+;;
     esac
 echo " page Name on start of setStateProperties is $PAGE"
 }

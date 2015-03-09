@@ -1,10 +1,11 @@
                 =========================================================================
-             =======            >>> PLATFORM STATUS DASHBOARD tool 2.0 <<<            ======
+             =======            >>> PLATFORM STATUS DASHBOARD tool      <<<            ======
                 =========================================================================
 
     ==>>  Dashboard URL : https://confluence.intgdc.com/display/PSM/Platform+Status+Monitoring+Home
     ==>>  Dashboard documentation: https://confluence.intgdc.com/display/support/Monitoring
     ==>>  Testing dashboard : https://confluence.intgdc.com/display/~zdenek.macicek/Status+Dashboard+-+phase+1
+    ==>>  GitHub : https://github.com/macicekz/statusDashboardTool
 
 ###Basic usage of main script:
 
@@ -114,6 +115,23 @@
             3. set up user confluence credentials.
                 === ./setup.sh -u  ===
 
+### to set up release ......
+
+    ./release.sh [-]seTAHhnD
+
+        -s release started
+        -e release ended
+        -T Confluence page of release
+        -A not functional yet
+        -h/H - [do not update history ]
+        -n [Note]
+        -D [Data Center]
+
+        => EXAMPLES
+            1. Sets up running release R102.5 for datacenter NA1
+                === ./release.sh -s -D NA1 -T https://confluence.intgdc.com/display/dev/R102.5  ===
+            2. Sets up release R102.5 for datacenter NA1 as finished'
+                === ./release.sh -e -D NA1  ===
 
 
 >>> ---=====================......................................=========================--- <<<

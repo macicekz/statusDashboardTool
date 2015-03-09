@@ -7,13 +7,13 @@ REPORTS            --Component REPORTS CALCULATION       *   PROBLEM       -- Pr
 DS                 --Component DATA STORAGE              *   DOWN          -- Not Working
 DM                 --Component DATA MART                 *   PERFORMANCE   -- Performance degradation
 EXPORTERS          --Component EXPORTERS      	         *   UNKNOW        -- To grey out
-SECURITY           --Component SECURITY
+SECURITY           --Component SECURITY                  *   RELEASE       -- Platform is under planned maintenance
 
     --- SubComponents ---                                *       --- Watch state ---
 
 CC                 -- SubCompoennt CLOUD CONNECT         *   ONLINE         -- Someone is watching
 API                -- SubCompoennt API + CL TOOL         *   OFFLINE        -- None is watching
-WEBDAV             -- SubCompoennt WEBDAV, S3            *   RELEASE        -- Platform is under planned maintenance
+WEBDAV             -- SubCompoennt WEBDAV, S3
 POSTGRESS          -- SubCompoennt POSTGRESS DWHS
 VERTICA            -- SubCompoennt VERTICA DWHS
 IC                 -- SubCompoennt INTEGRATION CONSOLE

@@ -173,7 +173,9 @@ do
         echo "***  6. change component"
         echo "***  7. change Our Webs"
         echo ""
-        echo "***  8. update the whole tree of components change component"
+        echo "***  8. update the whole tree of components"
+        echo "" #new row
+        echo "***  9. Release "
         echo "" #new row
         echo "***  0. go back to start or exit in any place within Wizzard"
         echo "" #new row
@@ -524,7 +526,41 @@ do
                         finishEdit
                     fi
                 ;;
+                9)
+                echo "What Datacenter should be changed ? "
+                echo "" #new row
+                echo "***   1.  NA1"
+                echo "***   2.  NA2"
+                echo "***   3.  EU1"
+                echo "" #new row
+                echo -n "Your choice: "
 
+                read DC
+                case $DC in
+                            1) DC="NA1";;
+                            2) DC="NA2";;
+                            3) DC="EU";;
+                            0) shift;;
+                esac
+
+                echo "What is state ?"
+                echo "" #new row
+                echo "***   1.  START"
+                echo "***   2.  END"
+
+                read STATE_P
+                case $STATE_P in
+                                1) STATE="START"
+                                   echo "What is release URL in confluence?"
+                                   read URL
+                                   ./release.sh -s -D $DC -T $URL
+                                ;;
+                                2) STATE="END"
+                                   ./release.sh -e -D $DC
+                                ;;
+                                0) shift;;
+                esac
+                ;;
                 esac
 
     echo "" #new row
