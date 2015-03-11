@@ -9,7 +9,41 @@
 #
 #  Created by Zdenek Macicek on 23.01.15.
 #
+#----------------------------------------------------------------------
+function getColour ()
+{
+#    convertSpecialCharracters
 
+case $1 in
+1)  COLOUR_NA1=`cat $T_HOME/data/htmlCharsConvert_responseGetPage_$PAGE.xml | awk -F $'"colour">' '{print  $2 }' | awk -F $'<' '{print $1}'`
+echo "State of NA1  in getColour is: $COLOUR_NA1"
+;;
+2)COLOUR_EU1=`cat $T_HOME/data/htmlCharsConvert_responseGetPage_$PAGE.xml | awk -F $'"colour">' '{print  $3 }' | awk -F $'<' '{print $1}'`
+echo "State of EU1 in getColour  is: $COLOUR_EU1"
+;;
+3)COLOUR_NA2=`cat $T_HOME/data/htmlCharsConvert_responseGetPage_$PAGE.xml | awk -F $'"colour">' '{print  $4 }' | awk -F $'<' '{print $1}'`
+echo "State of NA2 in getColour is: $COLOUR_NA2"
+;;
+esac
+}
+#----------------------------------------------------------------------
+function getState ()
+{
+#    convertSpecialCharracters
+
+case $1 in
+1)  STATE_NA1=`cat $T_HOME/data/htmlCharsConvert_responseGetPage_$PAGE.xml | awk -F $'"title">' '{print  $2 }' | awk -F $'<' '{print $1}'`
+echo "State of NA1  in getState is: $STATE_NA1"
+;;
+2)STATE_EU1=`cat $T_HOME/data/htmlCharsConvert_responseGetPage_$PAGE.xml | awk -F $'"title">' '{print  $3 }' | awk -F $'<' '{print $1}'`
+echo "State of EU1 in getState  is: $STATE_EU1"
+;;
+3)STATE_NA2=`cat $T_HOME/data/htmlCharsConvert_responseGetPage_$PAGE.xml | awk -F $'"title">' '{print  $4 }' | awk -F $'<' '{print $1}'`
+echo "State of NA2 in getState is: $STATE_NA2"
+;;
+esac
+}
+#----------------------------------------------------------------------
 function convertPageName #Updates Page Name according given parameter
 {
 source ../conf/config.cfg
@@ -35,24 +69,24 @@ function setStateProperties  #sets colour, page comment and comment according to
                     COLOUR="yellow"
                     PAGE_COMMENT="User $CUSER change state of $PAGE_NAME on Data Center: $DC to $STATE. See $TICKET for more informations. $NOTE"
                     PAGE_URL=
-                    URL_NAME=`echo "$TICKET_URL"| awk  -F $'/' '{print $5}'`
+#                   URL_NAME=`echo "$TICKET_URL"| awk  -F $'/' '{print $5}'`
             ;;
                 DOWN)
                     COLOUR="red"
                     PAGE_COMMENT=$PAGE_COMMENT_PROBLEM
-                    URL_NAME=`echo "$TICKET_URL"| awk  -F $'/' '{print $5}'`
+#                    URL_NAME=`echo "$TICKET_URL"| awk  -F $'/' '{print $5}'`
             ;;
                 PERFORMANCE)
                     COLOUR="blue"
                     STATE="PERFORMANCE DEGRADATION"
                     PAGE_COMMENT=$PAGE_COMMENT_PROBLEM
-                    URL_NAME=`echo "$TICKET_URL"| awk  -F $'/' '{print $5}'`
+#                   URL_NAME=`echo "$TICKET_URL"| awk  -F $'/' '{print $5}'`
             ;;
                 UNKNOWN)
                     COLOUR="grey"
                     STATE="-"
                     PAGE_COMMENT="$PAGE_COMMENT_UNKNOWN"
-                    URL_NAME="-"
+#                    URL_NAME="-"
             ;;
                 RELEASE)
                     COLOUR="red"
@@ -71,56 +105,76 @@ case $DC in
     NA1)
         if [ $STATE == "OK" ]; then
                 URL_NA1=$PAGE_URL
+                URL_NAME="NA1"
                 COLOUR_NA1=$COLOUR
-                STATE_NA1="UP"
+                STATE_NA1="NA1"
         else
                 URL_NA1=$TICKET_URL
-                STATE_NA1=$URL_NAME
+                STATE_NA1=$(echo "NA1 $URL_NAME")
                 COLOUR_NA1=$COLOUR
         fi
-    ;;
+getState 2
+getState 3
+getColour 2
+getColour 3
+
+;;
     EU1)
         if [ $STATE == "OK"  ]; then
                 URL_EU1=$PAGE_URL
-                STATE_EU1="UP"
+                STATE_EU1="EU1"
                 COLOUR_EU1=$COLOUR
+                URL_NAME="EU1"
         else
                 URL_EU1=$TICKET_URL
-                STATE_EU1=$URL_NAME
+                STATE_EU1=$(echo "EU1 $URL_NAME")
                 COLOUR_EU1=$COLOUR
         fi
+getState 1
+getState 3
+getColour 1
+getColour 3
     ;;
     NA2)
         if [ $STATE == "OK" ]; then
                 URL_NA2=$PAGE_URL
-                STATE_NA2="UP"
+                STATE_NA2="NA2"
                 COLOUR_NA2=$COLOUR
+                URL_NAME="NA2"
         else
                 URL_NA2=$TICKET_URL
-                STATE_NA2=$URL_NAME
+                STATE_NA2=$(echo "NA2 $URL_NAME")
                 COLOUR_NA2=$COLOUR
         fi
-    ;;
-    ALL)
-        if [ $STATE == "OK" ]; then
-                URL_NA1=$PAGE_URL
-                URL_EU1=$PAGE_URL
-                URL_NA2=$PAGE_URL
-                STATE_NA1="UP"
-                STATE_EU1="UP"
-                STATE_NA2="UP"
-                COLOUR_NA1=$COLOUR
-                COLOUR_EU2=$COLOUR
-                COLOUR_NA2=$COLOUR
-        else
-                STATE_NA2=$URL_NAME
-                COLOUR_NA2=$COLOUR
-                STATE_NA1=$URL_NAME
-                COLOUR_NA1=$COLOUR
-                STATE_EU1=$URL_NAME
-                COLOUR_EU1=$COLOUR
-        fi
-    ;;
+getState 2
+getState 1
+getColour 2
+getColour 1
+;;
+
+ALL)
+if [ $STATE == "OK" ]; then
+URL_NA1=$PAGE_URL
+URL_EU1=$PAGE_URL
+URL_NA2=$PAGE_URL
+STATE_NA1="NA1"
+STATE_NA2="NA2"
+STATE_EU1="EU1"
+COLOUR_NA2=$COLOUR
+COLOUR_NA1=$COLOUR
+COLOUR_EU1=$COLOUR
+else
+URL_NA1=$TICKET_URL
+URL_EU1=$TICKET_URL
+URL_NA2=$TICKET_URL
+STATE_NA1="NA1"
+STATE_NA2="NA2"
+STATE_EU1="EU1"
+COLOUR_NA2=$COLOUR
+COLOUR_NA1=$COLOUR
+COLOUR_EU1=$COLOUR
+fi
+;;
     "")  error_exit "$LINENO: NO DATACETER given "
     ;;
     esac
@@ -216,12 +270,19 @@ do
                 ;;
             -help) #_TODO_ run help
                 ;;
+            -T) TICKET_URL=$2;;
             esac
     shift
 done
 
 #obtain full page name
 convertPageName
+
+
+./getPageInfo.sh -n $PAGE
+./transformMessages.sh -h responseGetPage_$PAGE.xml
+
+
 #set up properties by parameters
 setStateProperties
 #set up Data center specific variables for page update"
@@ -230,7 +291,8 @@ setDcSpecificProperties
 #obtain actual informations bout page
 echo "Page long before calling getPage is $PAGE_NAME"
 echo "Page short before calling getPage is $PAGE"
-./getPageInfo.sh -n $PAGE
+#./getPageInfo.sh -n $PAGE
+#./transformMessages.sh -h responseGetPage_WEBS.xml
 
 source ../conf/config.cfg
 CAPI_URL=$API_URL
@@ -241,7 +303,7 @@ PAGE_URL=`xmllint --xpath "//getPageReturn/url/text()" $T_HOME/data/responseGetP
 PAGE_ID=`xmllint --xpath "//getPageReturn/id/text()" $T_HOME/data/responseGetPage_$PAGE_NAME.xml`
 PAGE_PARENT=`xmllint --xpath "//getPageReturn/parentId/text()" $T_HOME/data/responseGetPage_$PAGE_NAME.xml`
 
-REQUEST="<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"http://soap.rpc.confluence.atlassian.com\"><soapenv:Header/><soapenv:Body><soap:updatePage soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><in0 xsi:type=\"xsd:string\">$TOKEN</in0><in1 xsi:type=\"bean:RemotePage\" xmlns:bean=\"http://beans.soap.rpc.confluence.atlassian.com\"><id xsi:type=\"xsd:long\">$PAGE_ID</id><space xsi:type=\"xsd:string\">$SPACE_NAME</space><title xsi:type=\"xsd:string\">$PAGE_NAME</title><parentId xsi:type=\"xsd:long\">$PAGE_PARENT</parentId><url xsi:type=\"xsd:string\">$PAGE_URL</url><version xsi:type=\"xsd:int\">$PAGE_VERSION</version><content xsi:type=\"xsd:string\"><![CDATA[<ac:structured-macro ac:name=\"excerpt\"><ac:parameter ac:name=\"atlassian-macro-output-type\">INLINE</ac:parameter><ac:rich-text-body><ac:structured-macro ac:name=\"table-plus\"><ac:parameter ac:name=\"columnStyles\">width:170px,width:170px,width:170px,width:170px</ac:parameter><ac:parameter ac:name=\"atlassian-macro-output-type\">INLINE</ac:parameter><ac:rich-text-body><table style=\"line-height: 1.4285715;\"><tbody><tr><th class=\"highlight-grey\" data-highlight-colour=\"grey\"><a href=\"$PAGE_URL\">$PAGE_NAME</a></th><th class=\"highlight-$COLOUR\" data-highlight-colour=\"$COLOUR\"><a href=\"$PAGE_URL\"> <ac:structured-macro ac:name=\"status\"><ac:parameter ac:name=\"colour\">$COLOUR</ac:parameter><ac:parameter ac:name=\"title\">NA1</ac:parameter></ac:structured-macro> </a></th><th class=\"highlight-grey\" data-highlight-colour=\"grey\"><a href=\"$PAGE_URL\"> <ac:structured-macro ac:name=\"status\"><ac:parameter ac:name=\"colour\">grey</ac:parameter><ac:parameter ac:name=\"title\">EU1</ac:parameter></ac:structured-macro> </a></th><th class=\"highlight-grey\" data-highlight-colour=\"grey\"><a href=\"$PAGE_URL\"> <ac:structured-macro ac:name=\"status\"><ac:parameter ac:name=\"colour\">grey</ac:parameter><ac:parameter ac:name=\"title\">NA2</ac:parameter></ac:structured-macro> </a></th></tr></tbody></table></ac:rich-text-body></ac:structured-macro></ac:rich-text-body></ac:structured-macro><p><ac:structured-macro ac:name=\"version-history\"><ac:parameter ac:name=\"page\">@self</ac:parameter><ac:parameter ac:name=\"dateFormat\">dd MMMM yyyy - hh:mm aa z</ac:parameter><ac:parameter ac:name=\"first\">23</ac:parameter></ac:structured-macro></p>]]></content></in1><in2 xsi:type=\"bean:RemotePageUpdateOptions\" xmlns:bean=\"http://beans.soap.rpc.confluence.atlassian.com\"><minorEdit xsi:type=\"xsd:boolean\">false</minorEdit><versionComment xsi:type=\"xsd:string\">$PAGE_COMMENT</versionComment></in2></soap:updatePage></soapenv:Body></soapenv:Envelope>"
+REQUEST="<soapenv:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:soap=\"http://soap.rpc.confluence.atlassian.com\"><soapenv:Header/><soapenv:Body><soap:updatePage soapenv:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"><in0 xsi:type=\"xsd:string\">$TOKEN</in0><in1 xsi:type=\"bean:RemotePage\" xmlns:bean=\"http://beans.soap.rpc.confluence.atlassian.com\"><id xsi:type=\"xsd:long\">$PAGE_ID</id><space xsi:type=\"xsd:string\">$SPACE_NAME</space><title xsi:type=\"xsd:string\">$PAGE_NAME</title><parentId xsi:type=\"xsd:long\">$PAGE_PARENT</parentId><url xsi:type=\"xsd:string\">$PAGE_URL</url><version xsi:type=\"xsd:int\">$PAGE_VERSION</version><content xsi:type=\"xsd:string\"><![CDATA[<ac:structured-macro ac:name=\"excerpt\"><ac:parameter ac:name=\"atlassian-macro-output-type\">INLINE</ac:parameter><ac:rich-text-body><ac:structured-macro ac:name=\"table-plus\"><ac:parameter ac:name=\"columnStyles\">width:170px,width:170px,width:170px,width:170px</ac:parameter><ac:parameter ac:name=\"atlassian-macro-output-type\">INLINE</ac:parameter><ac:rich-text-body><table style=\"line-height: 1.4285715;\"><tbody><tr><th class=\"highlight-grey\" data-highlight-colour=\"grey\"><a href=\"$PAGE_URL\">$PAGE_NAME</a></th><th class=\"highlight-$COLOUR_NA1\" data-highlight-colour=\"$COLOUR_NA1\"><a href=\"$URL_NA1\"> <ac:structured-macro ac:name=\"status\"><ac:parameter ac:name=\"colour\">$COLOUR_NA1</ac:parameter><ac:parameter ac:name=\"title\">$STATE_NA1</ac:parameter></ac:structured-macro> </a></th><th class=\"highlight-$COLOUR_EU1\" data-highlight-colour=\"$COLOUR_EU1\"><a href=\"$URL_EU1\"> <ac:structured-macro ac:name=\"status\"><ac:parameter ac:name=\"colour\">$COLOUR_EU1</ac:parameter><ac:parameter ac:name=\"title\">$STATE_EU1</ac:parameter></ac:structured-macro> </a></th><th class=\"highlight-$COLOUR_NA2\" data-highlight-colour=\"$COLOUR_NA2\"><a href=\"$URL_NA2\"> <ac:structured-macro ac:name=\"status\"><ac:parameter ac:name=\"colour\">$COLOUR_NA2</ac:parameter><ac:parameter ac:name=\"title\">$STATE_NA2</ac:parameter></ac:structured-macro> </a></th></tr></tbody></table></ac:rich-text-body></ac:structured-macro></ac:rich-text-body></ac:structured-macro><p><ac:structured-macro ac:name=\"version-history\"><ac:parameter ac:name=\"page\">@self</ac:parameter><ac:parameter ac:name=\"dateFormat\">dd MMMM yyyy - hh:mm aa z</ac:parameter><ac:parameter ac:name=\"first\">23</ac:parameter></ac:structured-macro></p>]]></content></in1><in2 xsi:type=\"bean:RemotePageUpdateOptions\" xmlns:bean=\"http://beans.soap.rpc.confluence.atlassian.com\"><minorEdit xsi:type=\"xsd:boolean\">false</minorEdit><versionComment xsi:type=\"xsd:string\">$PAGE_COMMENT</versionComment></in2></soap:updatePage></soapenv:Body></soapenv:Envelope>"
 
 echo "- Info : Saving update request to $T_HOME/data/messages/requestUpdatePage_$PAGE.xml "
 echo "$REQUEST" > $T_HOME/logs/messages/requestUpdatePage_$PAGE.xml
@@ -272,4 +334,5 @@ curl -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: https://confluen
 
 echo "- $PROGNAME:   Saving informations retrieved for $PAGE_NAME to $TOOL_HOME/data/responseUpdatePage_$PAGE.xml"
 cp "$T_HOME/logs/messages/responseUpdatePage_$PAGE.xml" $T_HOME/data/responseUpdatePage_$PAGE.xml
+
 echo "- Info : $LINENO: $PROGNAME : END "

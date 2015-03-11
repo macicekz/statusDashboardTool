@@ -90,23 +90,23 @@ function setStateProperties  #sets colour, page comment and comment according to
     case $STATE in
                 OK)
                     COLOUR="green"
-                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME on Data Center: $DC to $STATE. $NOTE"
+                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME to $STATE for Web: $WEB . $NOTE"
             ;;
                 PROBLEM)
                     COLOUR="yellow"
-                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME on Data Center: $DC to $STATE. See $TICKET_URL for more informations. $NOTE"
+                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME to $STATE for Web: $WEB . See $TICKET_URL for more informations. $NOTE"
 #        PAGE_URL=
                     handleTicket
             ;;
                 DOWN)
                     COLOUR="red"
-                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME on Data Center: $DC to $STATE. See $TICKET_URL for more informations. $NOTE"
+                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME to $STATE for Web: $WEB . See $TICKET_URL for more informations. $NOTE"
                     handleTicket
             ;;
                 PERFORMANCE)
                     COLOUR="blue"
                     STATE="PERFORMANCE DEGRADATION"
-                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME on Data Center: $DC to $STATE. See $TICKET_URL for more informations. $NOTE"
+                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME to $STATE for Web: $WEB . See $TICKET_URL for more informations. $NOTE"
                     handleTicket
             ;;
                 ONLINE)
@@ -124,16 +124,9 @@ function setStateProperties  #sets colour, page comment and comment according to
                 UNKNOWN)
                     COLOUR="grey"
                     STATE="-"
-                    PAGE_COMMENT="$PAGE_COMMENT_UNKNOWN"
+                    PAGE_COMMENT="User $CUSER change state of $PAGE_NAME to $STATE for Web: $WEB . $NOTE"
                     URL_NAME="-"
             ;;
-
-                #_TODO_ RELEASE
-                #RELEASE) COLOUR="grey"
-                #NA1="-"
-                #STATE="UNKNOWN"
-                #PAGE_COMMENT=$RELEASE_COMMENT_START
-                #;;
             esac
 }
 #----------------------------------------------------------------------

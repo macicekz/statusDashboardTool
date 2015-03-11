@@ -6,23 +6,50 @@
 #
 #----------------------------------------------------------------------
 PROGNAME=$(basename $0)
+EXIT_FLAG=0
+#----------------------------------------------------------------------
+function setWebs()
+{
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: What web page do you want to change? "
+        echo "" #new row
+        echo "     --- Web Pages ---"
+        echo "***   1.  GOODDATA.COM"
+        echo "***   2.  HELP"
+        echo "***   3.  DEVPORTAL"
+        echo "" #new row
+        echo "***   4.  ALL"
+        echo "" #new row
+        echo -n "::Your choice >>> "
 
+        read WEB
+        case $WEB in
+                1) WEB="GD" ;;
+                2) WEB="HELP" ;;
+                3) WEB="DEV";;
+                4) WEB="ALL" ;;
+                0) EXIT_FLAG=1;;
+                "") echo "" ;;
+        esac
+            echo ":: Entered WEB :>>>  $WEB"
+        else
+            shift
+        fi
+}
+#----------------------------------------------------------------------
 function checkLogin
 {
     source ../conf/user.cfg
     T_HOME=$TOOL_HOME
-
     TOKEN=`cat $T_HOME/conf/token`
-
-    ###Save token
     if [ ! $TOKEN ]; then
-
-    ERROR_RESPONSE=$(xmllint --xpath "//faultstring/text()" $T_HOME/logs/messages/responseLogin.xml| awk -F $':' '{print $2 }')
-    echo "- ERROR : $LINENO: $PROGNAME : INCORRECT LOGIN !!! "
-    echo "- ERROR : $LINENO: $PROGNAME : Confluence returned error: $ERROR_RESPONSE"
-    exit
+        ERROR_RESPONSE=$(xmllint --xpath "//faultstring/text()" $T_HOME/logs/messages/responseLogin.xml| awk -F $':' '{print $2 }')
+        echo "- ERROR : $LINENO: $PROGNAME : INCORRECT LOGIN !!! "
+        echo "- ERROR : $LINENO: $PROGNAME : Confluence returned error: $ERROR_RESPONSE"
+        exit
     else
-    echo "- Info : $LINENO: $PROGNAME: Token exists: $TOKEN"
+        echo "- Info : $LINENO: $PROGNAME: Token exists: $TOKEN"
     fi
 }
 #----------------------------------------------------------------------
@@ -43,112 +70,279 @@ function checkToken  ###Check if token exists
     else
         echo "- OK : $LINENO: $PROGNAME : Token exists "
         # _TODO_ check age of token if not expired
-fi
+    fi
 }
 #----------------------------------------------------------------------
-function finishEdit ()
+function setState()
 {
-    echo "What is a new state? "
-    echo "" #new row
-    echo "     --- States ---"
-    echo "1.  All OK"
-    echo "2.  Problems but running"
-    echo "3.  Not working"
-    echo "4.  Performance problems"
-    echo "5.  unknown - to grey out"
-    echo "" #new row
-    echo -n "Your choice: "
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: Wat is a new state? "
+        echo "" #new row
+        echo "     --- States ---"
+        echo "1.  OK - UP and Running"
+        echo "2.  PROBLEM but running"
+        echo "3.  DOWN - Not working"
+        echo "4.  PERFORMANCE DEGRADATION problem"
+        echo "" #new row
+        echo "5.  UNKNOWN - to grey out"
+        echo "" #new row
+        echo -n "::Your choice >>> "
 
-    read STATE
-    case $STATE in
+        read STATE_P
+        case $STATE_P in
                     1) STATE="OK";;
                     2) STATE="PROBLEM";;
                     3) STATE="DOWN";;
                     4) STATE="PERFORMANCE";;
                     5) STATE="UNKNOWN";;
-                    0) return 0 ;;
-    esac
-
-    echo "What is a ticket (Zendesk, JIRA, PagerDuty allert)? ( Keep empty if no ticket yet) "
-
-    read TICKET
-
-    if [ $TICKET -eq 0 ]; then
-        return 0
+                    0) EXIT_FLAG=1 ;;
+        esac
+            echo ":: Entered STATE :>>>  $STATE"
     else
-        echo "entered ticket: $TICKET"
+        shift
     fi
-
-    echo "Do you want to update history ? "
-    echo "" #new row
-    echo -n "Your choice: "
-
-    read HISTORY_FLAG
-    case $HISTORY_FLAG in
-                    y) HISTORY_FLAG="y"
-                    ;;
-                    Y) HISTORY_FLAG="y"
-                    ;;
-                    N) HISTORY_FLAG="n"
-                    ;;
-                    n) HISTORY_FLAG="n" ;;
-                    0) return 0 ;;
-    esac
-
-    echo "Setting up $PAGE on NA1 to $STATE. $TICKET . History comment? - $HISTORY_FLAG "
-    echo "Do you want to proceed? "
-    echo "" #new row
-    echo -n "Your choice: "
-
-    read PROCEED
-    case $PROCEED in
-                    y) echo "cosik"
-                    ;;
-                    Y) echo="cosik velke"
-                    ;;
-                    N) SCRIPT="blabla"
-                    ;;
-                    n) SCRIPT="blabla"
-                    ;;
-                    0) return 0 ;;
-    esac
-
-    case $SCRIPT in
-            5)
-                 if [ $HISTORY_FLAG=="y" ]; then
-                    echo "" #new row
-                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
-                    ./summarys.sh -p $PAGE -s $STATE -D NA1 -T $TICKET>../logs/summarys_$PAGE.log
-                 else
-                    echo "" #new row
-                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
-                    ./summarys.sh -p $PAGE -s $STATE -D NA1 -T $TICKET -H>../logs/summarys_$PAGE.log
-                 fi
-            ;;
-            6)
-                 if [ $HISTORY_FLAG == y ]; then
-                    echo  "HISTORY"
-                    ./editPage.sh -p $PAGE -s $STATE -D NA1 -T $TICKET>../logs/editPage$PAGE.log
-                 else
-                 echo "NO HISTORY"
-                ./editPage.sh -p $PAGE -s $STATE -D NA1 -T $TICKET -H>../logs/editPage$PAGE.log
-                 fi
-            ;;
-            8)
-                if [ $HISTORY_FLAG=="y" ]; then
-                    echo "" #new row
-                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/treeUpdate_$PAGE.log"
-                    ./updateTree.sh -p $PAGE -s $STATE -D NA1 -T $TICKET > $T_HOME/logs/treeUpdate_$PAGE.log
-                else
-                    echo "" #new row
-                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/treeUpdate_$PAGE.log"
-                    ./updateTree.sh -p $PAGE -s $STATE -D NA1 -T $TICKET -H $T_HOME/logs/treeUpdate_$PAGE.log
-                fi
-            ;;
-            0) return 0 ;;
-            esac
 }
+#----------------------------------------------------------------------
+function setTicket()
+{
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: What is a ticket ? (Zendesk, JIRA, PagerDuty allert)? ( Keep empty if no ticket yet) "
+        echo "" #new row
+        echo -n "::Your choice >>> "
 
+        read TICKET
+
+        if [ $TICKET == "0" ]; then
+            EXIT_FLAG=1
+        else
+            if [ $TICKET ]; then
+                TICKET_FLAG="-T $TICKET"
+            else
+                TICKET_FLAG=""
+            fi
+            return 0
+        fi
+    echo ":: Entered TICKET :>>>  $TICKET"
+    else
+        return 0
+    fi
+}
+#----------------------------------------------------------------------
+function confirmUpdate()
+{
+    if [ $1  -eq 0 ]; then
+        echo "Setting up: $PAGE on $DC to $STATE. "
+        echo "Ticket: $TICKET ."
+        echo "History comment : $HISTORY_FLAG. "
+        echo "" #new row
+        echo "Do you want to proceed? "
+        echo "" #new row
+
+        read PROCEED
+        case $PROCEED in
+                    y) echo "- Info : $LINENO: $PROGNAME : Proceeding ... "
+                    ;;
+                    Y) echo "- Info : $LINENO: $PROGNAME : Proceeding ... "
+                    ;;
+                    N) return 0"
+                    ;;
+                    n) return 0"
+                    ;;
+                    0) EXIT_FLAG=1 ;;
+        esac
+    else
+        return 0
+    fi
+}
+#----------------------------------------------------------------------
+function setHistory()
+{
+    if [ $1  -eq 0 ]; then
+        echo "Do you want to update history ? "
+        echo "" #new row
+        echo -n "::Your choice >>> "
+
+        read HISTORY_FLAG
+        case $HISTORY_FLAG in
+                            y) HISTORY=""
+                                echo ":: History will be updated ::"
+                            ;;
+                            Y) HISTORY=""
+                                echo ":: History will be updated ::"
+                            ;;
+                            N) HISTORY="-H"
+                                echo ":: History will not be updated ::"
+                            ;;
+                            n) HISTORY="-H"
+                                echo ":: History will not be updated ::"
+                            ;;
+                            0) EXIT_FLAG=1 ;;
+        esac
+    else
+        return 0
+    fi
+}
+#----------------------------------------------------------------------
+function setSummary()
+{
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: What Summary do you want to change? "
+        echo "***   1. Platform"
+        echo "***   2. Components"
+        echo "***   3. SubComponents"
+        echo "" #new row
+        echo "***   4. All SubComponents"
+        echo "" #new row
+        echo -n "::Your choice >>> "
+
+        read PAGE_P
+        case $PAGE_P in
+                    1) PAGE="PLATFORM";;
+                    2) PAGE="COMPONENTS";;
+                    3) PAGE="SUBCOMPONENTS";;
+                    4) PAGE="ALL";;
+                    0) EXIT_FLAG=1;;
+        esac
+        echo ":: Entered Summary :>>>  $PAGE"
+    else
+        return 0
+    fi
+}
+#----------------------------------------------------------------------
+function setDataCenter()
+{
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: What Data Center should be updated? "
+        echo "" #new row
+        echo "     --- Data Centers ---"
+        echo "1.  NA1"
+        echo "2.  EU1"
+        echo "3.  NA2"
+        echo "" #new row
+        echo "4.  ALL"
+        echo "" #new row
+        echo -n "::Your choice >>> "
+
+        read DC_P
+        case $DC_P in
+                   1) DC="NA1";;
+                   2) DC="EU1";;
+                   3) DC="NA2";;
+                   4) DC="ALL";;
+                   0) EXIT_FLAG=1 ;;
+        esac
+        echo ":: Entered Data Center :>>>  $DC"
+    else
+        return 0
+    fi
+}
+#----------------------------------------------------------------------
+function setPageName()
+{
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: What Component do you want to change? "
+        echo "" #new row
+        echo "     --- Components ---"
+        echo "***   1.  ETL"
+        echo "***   2.  REPORTS COMPUTATION"
+        echo "***   3.  DATA STORAGE"
+        echo "***   4.  DATA MART"
+        echo "***   5.  EXPORTERS"
+        echo "***   6.  SECURITY"
+        echo "" #new row
+        echo "     --- SubComponents --- "
+        echo "" #new row
+        echo "***   7.   CLOUD CONNECT"
+        echo "***   8.   API + CL TOOL"
+        echo "***   9.   WEBDAV, S3"
+        echo "***   10.  POSTGRESS DWHS"
+        echo "***   11.  VERTICA DWHS"
+        echo "***   12.  INTEGRATION CONSOLE"
+        echo "***   13.  AQE"
+        echo "***   14.  CONNECTORS"
+        echo "***   15.  ADS"
+        echo "" #new row
+        echo -n "::Your choice >>> "
+
+        read PAGE_P
+        case $PAGE_P in
+                    1) PAGE="ETL";;
+                    2) PAGE="REPORTS";;
+                    3) PAGE="DS";;
+                    4) PAGE="DM";;
+                    5) PAGE="EXPORTERS";;
+                    6) PAGE="SECURITY";;
+                    7) PAGE="CC";;
+                    8) PAGE="API";;
+                    9) PAGE="WEBDAV";;
+                    10) PAGE="POSTGRESS";;
+                    11) PAGE="VERTICA";;
+                    12) PAGE="IC";;
+                    13) PAGE="AQE";;
+                    14) PAGE="CONNECTORS";;
+                    15) PAGE="ADS";;
+                    0) EXIT_FLAG=1;
+        esac
+
+        if [ $PAGE_P -gt 6 ]; then
+            echo ":: Entered Component :>>>  $PAGE"
+        else
+            echo ":: Entered SubComponent :>>>  $PAGE"
+        fi
+    else
+        return 0
+    fi
+}
+#----------------------------------------------------------------------
+function setRelease()
+{
+    if [ $1  -eq 0 ]; then
+        echo "" #new row
+        echo "Question: What Data Center should be updated? "
+        echo "" #new row
+        echo "     --- Data Centers ---"
+        echo "1.  NA1"
+        echo "2.  EU1"
+        echo "3.  NA2"
+        echo "" #new row
+        echo "4.  ALL"
+        echo "" #new row
+        echo -n "::Your choice >>> "
+
+        read DC_P
+        case $DC_P in
+                1) DC="NA1";;
+                2) DC="EU1";;
+                3) DC="NA2";;
+                4) DC="ALL";;
+                0) EXIT_FLAG=1 ;;
+        esac
+        echo ":: Entered Data Center :>>>  $DC"
+        echo "Question: What is a Release URL in Confluence ? (check https://confluence.intgdc.com/display/plat/Delivery+and+QA+Portal) "
+        echo "" #new row
+        echo -n ":: URL >>> "
+
+        if [ $EXIT_FLAG -eq 0 ]; then
+            read TICKET
+            if [ $TICKET ]; then
+                TICKET_FLAG="-T $TICKET"
+            else
+                TICKET_FLAG="-T RELEASE"
+            fi
+            echo ":: Entered Release URL :>>>  $TICKET"
+            echo "" #new row
+        else
+            return 0
+        fi
+    else
+        return 0
+    fi
+}
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
 
@@ -163,23 +357,27 @@ do
         echo "" #new row
         echo "               === CHOOSE TYPE OF CHANGE ===            "
         echo "" #new row
-        echo "***  1. login platform watch (no change in other parts)"
-        echo "***  2. logout platform watch (no change in other parts)"
+        echo "***  1. LOGIN WATCH (no change in other parts)"
+        echo "***  2. LOGOUT WATCH (no change in other parts)"
         echo ""
-        echo "***  3. login platform watch and make whole dashboard green"
-        echo "***  4. logout platform watch and make whole dashboard grey"
+        echo "***  3. WATCH Login DASHBOARD green"
+        echo "***  4. WATCH Logout DASHBOARD grey"
         echo ""
-        echo "***  5. change summary"
-        echo "***  6. change component"
-        echo "***  7. change Our Webs"
+        echo "***  5. change SUMMARY"
+        echo "***  6. change OUR WEBS"
+        echo "***  7. change COMPONENT or SUBCOMPONENT"
         echo ""
-        echo "***  8. update the whole tree of components"
+        echo "***  8. Component TREE update - to update the whole tree of components"
         echo "" #new row
-        echo "***  9. Release "
+        echo "***  11. RELEASE - Start"
+        echo "***  12. RELEASE - End"
+        echo "" #new row
+        echo "***  13. AllGrey  - no History logged"
+        echo "***  17. AllOK - no History logged"
         echo "" #new row
         echo "***  0. go back to start or exit in any place within Wizzard"
         echo "" #new row
-        echo -n "Your choice: "
+        echo -n ":: Enter your wish :>>> "
 
         read SCRIPT
         case $SCRIPT in
@@ -194,397 +392,155 @@ do
                     ./wlogout.sh>../logs/logoutPlatformWatch.log
                     shift
                     ;;
-                3)  echo "" #new row
-                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/allOK.log "
-                    ./allOK.sh>../logs/allOK.log
+                3)  setDataCenter $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/allOK_$DC.log "
+                        ./allOK_$DC.sh>../logs/allOK_$DC.log
+                    else
+                        shift
+                    fi
                     shift
                     ;;
-                4)  echo "" #new row
-                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/allGrey.log "
-                    ./allGrey.sh>../logs/allGrey.log
+                4)  setDataCenter $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/allGrey_$DC.log "
+                        ./allGrey_$DC.sh>../logs/allGrey_$DC.log
+                    else
+                        shift
+                    fi
                     shift
                     ;;
                 0) shift ;;
-
-                5)
-                    echo "What Summary do you want to change? "
-                    echo "***   1. Platform"
-                    echo "***   2. Components"
-                    echo "***   3. SubComponents"
-                    echo "***   4. All SubComponents"
+                5)  setSummary $EXIT_FLAG
                     echo "" #new row
-                    echo -n "Your choice: "
-
-                    read PAGE
-                    case $PAGE in
-                                0) shift
-                                ;;
-                                1)
-                                    PAGE="PLATFORM"
-                                    echo "What is a new state? "
-                                    echo "" #new row
-                                    echo "     --- States ---"
-                                    echo "***   1.  All OK"
-                                    echo "***   2.  Problems but running"
-                                    echo "***   3.  Not working"
-                                    echo "***   4.  Performance problems"
-                                    echo "***   5.  unknown - to grey out"
-                                    echo -n "Your choice: "
-
-                                    read STATE
-                                    case $STATE in
-                                    1) STATE="OK";;
-                                    2) STATE="PROBLEM";;
-                                    3) STATE="DOWN";;
-                                    4) STATE="PERFORMANCE";;
-                                    5) STATE="UNKNOWN";;
-                                    esac
-                                    if [ $STATE -eq 0 ]; then
-                                        shift
-                                    else
-                                        echo "" #new row
-                                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
-                                        ./summarys.sh -p $PAGE -s $STATE -D NA1>../logs/summarys_$PAGE.log
-                                    fi
-                                ;;
-                                2)
-                                    PAGE="COMPONENTS"
-                                    echo "What is a new state? "
-                                    echo "" #new row
-                                    echo "     --- States ---"
-                                    echo "***   1.  All OK"
-                                    echo "***   2.  Problems but running"
-                                    echo "***   3.  Not working"
-                                    echo "***   4.  Performance problems"
-                                    echo "***   5.  unknown - to grey out"
-                                    echo -n "Your choice: "
-
-                                    read STATE
-                                    case $STATE in
-                                    1) STATE="OK";;
-                                    2) STATE="PROBLEM";;
-                                    3) STATE="DOWN";;
-                                    4) STATE="PERFORMANCE";;
-                                    5) STATE="UNKNOWN";;
-                                    0) shift ;;
-                                    esac
-                                    if [ $STATE -eq 0 ]; then
-                                        shift
-                                    else
-                                        echo "" #new row
-                                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
-                                        ./summarys.sh -p $PAGE -s $STATE -D NA1>../logs/summarys_$PAGE.log
-                                    fi
-                                ;;
-                                3)
-                                    PAGE="SUBCOMPONENTS"
-                                    echo "What is a new state? "
-                                    echo "" #new row
-                                    echo "     --- States ---"
-                                    echo "***   1.  All OK"
-                                    echo "***   2.  Problems but running"
-                                    echo "***   3.  Not working"
-                                    echo "***   4.  Performance problems"
-                                    echo "***   5.  unknown - to grey out"
-                                    echo -n "Your choice: "
-
-                                    read STATE
-                                    case $STATE in
-                                                1) STATE="OK";;
-                                                2) STATE="PROBLEM";;
-                                                3) STATE="DOWN";;
-                                                4) STATE="PERFORMANCE";;
-                                                5) STATE="UNKNOWN";;
-                                                0) shift ;;
-                                    esac
-                                    if [ $STATE -eq 0 ]; then
-                                        shift
-                                    else
-                                        echo "" #new row
-                                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
-                                        ./summarys.sh -p $PAGE -s $STATE -D NA1>../logs/summarys_$PAGE.log
-                                    fi
-                                ;;
-                                4)
-                                    echo "What is a new state? "
-                                    echo "" #new row
-                                    echo "     --- States ---"
-                                    echo "***   1.  All OK"
-                                    echo "***   2.  unknown - to grey out"
-                                    echo -n "Your choice: "
-
-                                    read STATE
-                                    case $STATE in  1)
-                                                    echo "" #new row
-                                                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_PLATFORM.log"
-                                                    ./summarys.sh -p PLATFORM -s OK -D NA1 -H > $T_HOME/logs/summarys_PLATFORM.log
-                                                    echo "" #new row
-                                                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_COMPONENTS.log"
-                                                    ./summarys.sh -p COMPONENTS -s OK -D NA1 -H > $T_HOME/logs/summarys_COMPONENTS.log
-                                                    echo "" #new row
-                                                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_SUBCOMPONENTS.log"
-                                                    ./summarys.sh -p SUBCOMPONENTS -s OK -D NA1 -H > $T_HOME/logs/summarys_SUBCOMPONENTS.log
-                                                ;;
-                                                2)
-                                                    echo "" #new row
-                                                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_PLATFORM.log"
-                                                    ./summarys.sh -p PLATFORM -s UNKNOWN -D NA1 -H > $T_HOME/logs/summarys_PLATFORM.log
-                                                    echo "" #new row
-                                                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_COMPONENTS.log"
-                                                    ./summarys.sh -p COMPONENTS -s UNKNOWN -D NA1 -H > $T_HOME/logs/summarys_COMPONENTS.log
-                                                    echo "" #new row
-                                                    echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_SUBCOMPONENTS.log"
-                                                    ./summarys.sh -p SUBCOMPONENTS -s UNKNOWN -D NA1 -H > $T_HOME/logs/summarys_SUBCOMPONENTS.log
-                                                ;;
-                                                0) shift ;;
-                                    esac
-                                ;;
-                    esac
-                ;;
-                6)
-                    echo "What Component do you want to change? "
+                    setState $EXIT_FLAG
                     echo "" #new row
-                    echo "     --- Components ---"
-                    echo "***   1.  ETL"
-                    echo "***   2.  REPORTS COMPUTATION"
-                    echo "***   3.  DATA STORAGE"
-                    echo "***   4.  DATA MART"
-                    echo "***   5.  EXPORTERS"
-                    echo "***   6.  SECURITY"
+                    setDataCenter $EXIT_FLAG
                     echo "" #new row
-                    echo "     --- SubComponents --- "
+                    setTicket $EXIT_FLAG
                     echo "" #new row
-                    echo "***   7.   CLOUD CONNECT"
-                    echo "***   8.   API + CL TOOL"
-                    echo "***   9.   WEBDAV, S3"
-                    echo "***   10.  POSTGRESS DWHS"
-                    echo "***   11.  VERTICA DWHS"
-                    echo "***   12.  INTEGRATION CONSOLE"
-                    echo "***   13.  AQE"
-                    echo "***   14.  CONNECTORS"
-                    echo "***   15.  ADS"
-                    echo -n "Your choice: "
-
-                read PAGE
-                case $PAGE in
-                        1) PAGE="ETL";;
-                        2) PAGE="REPORTS";;
-                        3) PAGE="DS";;
-                        4) PAGE="DM";;
-                        5) PAGE="EXPORTERS";;
-                        6) PAGE="SECURITY";;
-                        7) PAGE="CC";;
-                        8) PAGE="API";;
-                        9) PAGE="WEBDAV";;
-                        10) PAGE="POSTGRESS";;
-                        11) PAGE="VERTICA";;
-                        12) PAGE="IC";;
-                        13) PAGE="AQE";;
-                        14) PAGE="CONNECTORS";;
-                        15) PAGE="ADS";;
-                esac
-                if [ $PAGE -eq 0 ]; then
-                    shift
-                else
-                    finishEdit
-                fi
-                ;;
-                7)
-                    echo "What web page do you want to change? "
-                    echo "" #new row
-                    echo "     --- Web Pages ---"
-                    echo "***   1.  GOODDATA.COM"
-                    echo "***   2.  HELP"
-                    echo "***   3.  DEVPORTAL"
-
-                    read WEB
-                    case $WEB in
-                            1) WEB="GD" ;;
-                            2) WEB="HELP" ;;
-                            3) WEB="DEV" ;;
-                            "") echo "" ;;
-                    esac
- #-------Added
-                    echo "What is a new state? "
-                    echo "" #new row
-                    echo "     --- States ---"
-                    echo "1.  All OK"
-                    echo "2.  Problems but running"
-                    echo "3.  Not working"
-                    echo "4.  Performance problems"
-                    echo "5.  unknown - to grey out"
-                    echo "" #new row
-                    echo -n "Your choice: "
-
-                    read STATE
-                    case $STATE in
-                                1) STATE="OK";;
-                                2) STATE="PROBLEM";;
-                                3) STATE="DOWN";;
-                                4) STATE="PERFORMANCE";;
-                                5) STATE="UNKNOWN";;
-                                0) return 0 ;;
-                    esac
-
-                    echo "What is a ticket (Zendesk, JIRA, PagerDuty allert)? ( Keep empty if no ticket yet) "
-
-                    read TICKET
-
-                    if [ $TICKET -eq 0 ]; then
-                        return 0
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        if [ $PAGE == "ALL" ]; then
+                            echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
+                            ./summarys.sh -p PLATFORM -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/summarys_$PAGE_$DC.log
+                            echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
+                            ./summarys.sh -p COMPONENTS -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/summarys_$PAGE_$DC.log
+                            echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
+                            ./summarys.sh -p SUBCOMPONENTS -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/summarys_$PAGE_$DC.log
+                        else
+                            echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/summarys_$PAGE.log"
+                            ./summarys.sh -p $PAGE -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/summarys_$PAGE_$DC.log
+                        fi
                     else
-                        echo "entered ticket: $TICKET"
-                    fi
-
-                    echo "Do you want to update history ? "
-                    echo "" #new row
-                    echo -n "Your choice: "
-
-                    read HISTORY_FLAG
-                    case $HISTORY_FLAG in
-                            y) HISTORY_FLAG="y" ;;
-                            Y) HISTORY_FLAG="y" ;;
-                            N) HISTORY_FLAG="n" ;;
-                            n) HISTORY_FLAG="n" ;;
-                            0) return 0 ;;
-                    esac
-
-                    echo "Setting up Web page $WEB on to $STATE. $TICKET . History comment? - $HISTORY_FLAG "
-                    echo "Do you want to proceed? "
-                    echo "" #new row
-                    echo -n "Your choice: "
-
-                    read PROCEED
-                    case $PROCEED in
-                    y)
-                        if [ $HISTORY_FLAG=="y" ]; then
-                            ./editWebs.sh -w $WEB -s $STATE -T $TICKET
-                        else
-                            ./editWebs.sh -w $WEB -s $STATE -T $TICKET T -H
-                        fi
-                    ;;
-                    Y)
-                        if [ $HISTORY_FLAG=="y" ]; then
-                            ./editWebs.sh -w $WEB -s $STATE -T $TICKET
-                        else
-                            ./editWebs.sh -w $WEB -s $STATE -T $TICKET T -H
-                        fi
-                        ;;
-                    N) SCRIPT="blabla" ;;
-                    n) SCRIPT="blabla" ;;
-                    0) return 0 ;;
-                    esac
-                ;;
-#-------Added
-
-
-                8)
-                    echo "What component do you want to change? "
-                    echo "" #new row
-                    echo "     --- Components ---"
-                    echo "***   1.  ETL"
-                    echo "***   2.  REPORTS COMPUTATION"
-                    echo "***   3.  DATA STORAGE"
-                    echo "***   4.  DATA MART"
-                    echo "***   5.  EXPORTERS"
-                    echo "***   6.  SECURITY"
-                    echo "" #new row
-                    echo "--- SubComponents --- "
-                    echo "" #new row
-                    echo "***   7.   CLOUD CONNECT"
-                    echo "***   8.   API + CL TOOL"
-                    echo "***   9.   WEBDAV, S3"
-                    echo "***   10.  POSTGRESS DWHS"
-                    echo "***   11.  VERTICA DWHS"
-                    echo "***   12.  INTEGRATION CONSOLE"
-                    echo "***   13.  AQE"
-                    echo "***   14.  CONNECTORS"
-                    echo "***   15.  ADS"
-                    echo -n "Your choice: "
-
-                read PAGE
-                    case $PAGE in
-                            1) PAGE="ETL";;
-                            2) PAGE="REPORTS";;
-                            3) PAGE="DS";;
-                            4) PAGE="DM";;
-                            5) PAGE="EXPORTERS";;
-                            6) PAGE="SECURITY";;
-                            7) PAGE="CC";;
-                            8) PAGE="API";;
-                            9) PAGE="WEBDAV";;
-                            10) PAGE="POSTGRESS";;
-                            11) PAGE="VERTICA";;
-                            12) PAGE="IC";;
-                            13) PAGE="AQE";;
-                            14) PAGE="CONNECTORS";;
-                            15) PAGE="ADS";;
-                    esac
-                    if [ $PAGE -eq 0 ]; then
                         shift
-                    else
-                        finishEdit
                     fi
                 ;;
-                9)
-                echo "What Datacenter should be changed ? "
-                echo "" #new row
-                echo "***   1.  NA1"
-                echo "***   2.  NA2"
-                echo "***   3.  EU1"
-                echo "" #new row
-                echo -n "Your choice: "
-
-                read DC
-                case $DC in
-                            1) DC="NA1";;
-                            2) DC="NA2";;
-                            3) DC="EU";;
-                            0) shift;;
-                esac
-
-                echo "What is state ?"
-                echo "" #new row
-                echo "***   1.  START"
-                echo "***   2.  END"
-
-                read STATE_P
-                case $STATE_P in
-                                1) STATE="START"
-                                   echo "What is release URL in confluence?"
-                                   read URL
-                                   ./release.sh -s -D $DC -T $URL
-                                ;;
-                                2) STATE="END"
-                                   ./release.sh -e -D $DC
-                                ;;
-                                0) shift;;
-                esac
+                7)  setPageName $EXIT_FLAG
+                    setState $EXIT_FLAG
+                    setDataCenter $EXIT_FLAG
+                    setTicket $EXIT_FLAG
+                    setHistory $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        if [ $PAGE -eq 'ALL' ]; then
+                            echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/All$STATE_$DC.log"
+                            ./allOK_$DC.sh > ../logs/All$STATE_$DC.log
+                        else
+                            echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/editPage_$PAGE.log"
+                            ./editPage.sh -p $PAGE -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/editPage_$PAGE_$DC.log
+                        fi
+                    else
+                        shift
+                    fi
                 ;;
-                esac
+                6)  setState $EXIT_FLAG
+                    setWebs $EXIT_FLAG
+                    setHistory $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/editWebs_$WEB.log"
+                        ./editWebs.sh -w $WEB -s $STATE $TICKET_FLAG $HISTORY > ../logs/editWebs_$WEB_$DC.log
+                    else
+                        shift
+                    fi
+                ;;
+                8) # Tree Update
+                    setPageName $EXIT_FLAG
+                    setState $EXIT_FLAG
+                    setDataCenter $EXIT_FLAG
+                    setTicket $EXIT_FLAG
+                    setHistory $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/treeUpdate_$PAGE.log"1
+                        ./updateTree.sh -p $PAGE -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/treeUpdate_$PAGE_$DC.log
+                    else
+                        shift
+                    fi
+                ;;
+                11) #Release START
+                    setRelease $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_START_$DC"
+                        ./release.sh -s -D $DC $TICKET_FLAG $HISTORY > $T_HOME/logs/release_START_$DC.log
+                    else
+                        shift
+                    fi
+                ;;
+                12) #Release
+                    setRelease $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_END_$DC"
+                        ./release.sh -e -D $DC $HISTORY > $T_HOME/logs/release_END_$DC.log
+                    else
+                        shift
+                    fi
+                ;;
+                13) #Release START
+                    setDataCenter $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_AllGrey_$DC.log"
+                        ./allGrey_$DC.sh > $T_HOME/logs/release_AllGrey_$DC.log
+                    else
+                        shift
+                    fi
+                ;;
+                17) #Release START
+                    setDataCenter $EXIT_FLAG
+                    if [ $EXIT_FLAG -eq 0 ]; then
+                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_AllOK_$DC.log"
+                        ./allOK_$DC.sh > $T_HOME/logs/release_AllOK_$DC.log
+                    else
+                        shift
+                    fi
+                ;;
+        esac
 
-    echo "" #new row
-    echo -n "Do you want to continue? yY=YES / nN = NO:"
+        echo "" #new row
+        echo -n "Do you want to continue? yY=YES / nN = NO:"
+        echo "" #new row
+        echo -n "::Your choice >>> "
 
-    read CONTINUE
-    case $CONTINUE in
-            y) CONTINUE="y"
+        read CONTINUE
+        case $CONTINUE in
+            y)
+                EXIT_FLAG=0
+                CONTINUE="y"
+                TICKET_FLAG=""
             ;;
-            Y) PROCEED="y"
+            Y)
+                EXIT_FLAG=0
+                CONTINUE="y"
+                TICKET_FLAG=""
             ;;
-            N) SCRIPT="blabla"
+            N) CONTINUE="N"
             ;;
-            n) SCRIPT="blabla"
+            N) CONTINUE="N"
             ;;
-    esac
-
+        esac
 shift
 done
-
 
 ./logoutConfluence.sh
 
 echo "" #new row
 echo "Bye bye ... "
-
+echo "" #new row
 

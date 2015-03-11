@@ -5,6 +5,8 @@
 
 *.xcuserstate
 
-platformMonitoringDashboard/conf/user.cfg
+*user.cfg
 
 *.xcuserstate
+
+*.backup.sh

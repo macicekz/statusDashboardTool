@@ -1,38 +1,47 @@
 ##!/bin/bash
 #Change Logtest
 # -----------------------------
-# Fri Jan 23 08:00:00 CET 2015
+# Fri Jan 23 08:00:00 CET 2015 - ZMA
 #   - First draft.
 # -----------------------------
-# Fri Feb 13 2015
+# Fri Feb 13 2015 - ZMA
 #   - 2.0
 #   - First stable release
-# -----------------------------
+# ----------------- - ZMA------------
 # Tue Feb 18 2015
 #   - 2.1.
 #   - Fix for update of Webs
 #   logging out previously logged Watch
 #   - Minor bug fixes
 # -----------------------------
-# Tue Feb 24 2015
+# Tue Feb 24 2015 - ZMA
 #   - Hidden pasword during entering
 #   - Logging off previosly logged watch
 #   - Minor bug fixes
 # -----------------------------
-# Wed Feb 25 2015
+# Wed Feb 25 2015 - ZMA
 #   - Order of logging out previously logged Watch
 #   - Minor bug fixes
 # -----------------------------
-# Wed Mar 04 2015
+# Wed Mar 04 2015 - ZMA
 #   - setup for missing directories added
 #   - some dummy messages removed/updated
 #   - Minor Bug fixes
 # -----------------------------
-# Mon Mar 09 2015
+# Mon Mar 09 2015 - ZMA
 #   - Release handling added
 #   - Minor Bug fixes
 # -----------------------------
-
+# Tue Mar 10 2015 - ZMA
+#   - Release handling updated
+#   - Minor Bug fixes
+# -----------------------------
+# Tue Mar 11 2015 - ZMA
+#   - Multiple DC handling updated
+#   - Wizzard update to support Multiple DC
+#   - AllOK and AllGrey scripts for mutliple DC added
+#   - Minor Bug fixes
+# -----------------------------
 TOOL_HOME=$(pwd)
 
 clear

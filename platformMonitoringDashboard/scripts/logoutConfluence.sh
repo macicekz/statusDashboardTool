@@ -28,8 +28,8 @@ echo "$REQUEST" > $T_HOME/logs/messages/requestLogout.xml
 echo "- Info: $LINENO: $PROGNAME: Calling confluence API with URL: $CAPI_URL"
 
 ### Call Confluence API:
-curl -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: https://confluence.intgdc.com/plugins/servlet/soap-axis1/confluenceservice-v2/ConfluenceSoapService/logoutRequest"  -d @$T_HOME/logs/messages/requestLogout.xml -X POST $CAPI_URL > "$T_HOME/logs/messages/$TIMESTAMP_responseLogout.xml"
-RESPONSE=`xmllint --xpath "//logoutReturn/text()" $T_HOME/logs/messages/$TIMESTAMP_responseLogout.xml`
+curl -H "Content-Type: text/xml; charset=utf-8" -H "SOAPAction: https://confluence.intgdc.com/plugins/servlet/soap-axis1/confluenceservice-v2/ConfluenceSoapService/logoutRequest"  -d @$T_HOME/logs/messages/requestLogout.xml -X POST $CAPI_URL > "$T_HOME/logs/messages/responseLogout.xml"
+RESPONSE=`xmllint --xpath "//logoutReturn/text()" $T_HOME/logs/messages/responseLogout.xml`
 
 ### Delete token
 rm "$T_HOME/conf/token"
