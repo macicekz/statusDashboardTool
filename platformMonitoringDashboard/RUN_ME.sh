@@ -42,6 +42,13 @@
 #   - AllOK and AllGrey scripts for mutliple DC added
 #   - Minor Bug fixes
 # -----------------------------
+# Tue Mar 12 2015 - ZMA
+#   - Login/logoff of watch removed from history
+#   -
+#   -
+#   - 
+# -----------------------------
+
 TOOL_HOME=$(pwd)
 
 clear
