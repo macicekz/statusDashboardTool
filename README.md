@@ -24,3 +24,8 @@ bash: ./RUN_ME.sh: Permission denied
 - run "./RUN_ME.sh" -list to obtain list of all Components, states etc.
 - run "./RUN_ME.sh -Wizz" to start wizard which will guide you during editing of confluence status dashboard.
 
+4. Known issues :
+
+- some minor mistakes in documentation 
+
+

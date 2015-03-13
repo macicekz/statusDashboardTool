@@ -42,13 +42,16 @@
 #   - AllOK and AllGrey scripts for mutliple DC added
 #   - Minor Bug fixes
 # -----------------------------
-# Tue Mar 12 2015 - ZMA
+# Thu Mar 12 2015 - ZMA
 #   - Login/logoff of watch removed from history
-#   -
-#   -
-#   - 
+#   - Minor fixes
 # -----------------------------
-
+# Fri Mar 13 2015 - ZMA
+#   - logoff logging to history fixed
+#   - fixed https://github.com/macicekz/statusDashboardTool/issues/2 - Test flow
+#   - treeUpdate set for Components and Subcomponents only
+#   -
+# -----------------------------
 TOOL_HOME=$(pwd)
 
 clear

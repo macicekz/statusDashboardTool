@@ -1,9 +1,9 @@
 
 #!/bin/bash
-
-echo "" #new row
-echo "- Info : $LINENO: $PROGNAME : Logging in.... "
-./loginConfluence.sh
+#
+#echo "" #new row
+#echo "- Info : $LINENO: $PROGNAME : Logging in.... "
+#./loginConfluence.sh
 
 echo "- Info : $LINENO: $PROGNAME : Setting up state of watch.... "
 ./wlogin.sh

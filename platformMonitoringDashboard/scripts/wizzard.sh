@@ -469,11 +469,13 @@ do
                     setTicket $EXIT_FLAG
                     setHistory $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
-                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/treeUpdate_$PAGE.log"1
-                        ./updateTree.sh -p $PAGE -s $STATE -D $DC $TICKET_FLAG $HISTORY > ../logs/treeUpdate_$PAGE_$DC.log
+#                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/treeUpdate_$PAGE.log"
+                        ./updateTree.sh -p $PAGE -s $STATE -D $DC $TICKET_FLAG $HISTORY #> ../logs/treeUpdate_$PAGE_$DC.log
                     else
                         shift
                     fi
+                    echo "" #new row
+                    echo "To update Summary, please, use selection #5 in main menu. "
                 ;;
                 11) #Release START
                     setRelease $EXIT_FLAG
@@ -498,6 +500,7 @@ do
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_AllGrey_$DC.log"
                         ./allGrey_$DC.sh > $T_HOME/logs/release_AllGrey_$DC.log
+                        echo "- Info : $LINENO: $PROGNAME : Logged into $T_HOME/logs/release_AllGrey_$DC.log"
                     else
                         shift
                     fi
@@ -507,6 +510,7 @@ do
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_AllOK_$DC.log"
                         ./allOK_$DC.sh > $T_HOME/logs/release_AllOK_$DC.log
+                        echo "- Info : $LINENO: $PROGNAME : Logged into $T_HOME/logs/release_AllOK_$DC.log"
                     else
                         shift
                     fi

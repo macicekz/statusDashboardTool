@@ -16,6 +16,10 @@ TREE_PAGE=$1
 ./transformMessages.sh -f responseGetPage_$TREE_PAGE.xml
 CHANGE_FLAG_GREEN=$(grep -c green $T_HOME/data/readable_responseGetPage_$TREE_PAGE.xml)
 CHANGE_FLAG_GREY=$(grep -c grey $T_HOME/data/readable_responseGetPage_$TREE_PAGE.xml)
+CHANGE_FLAG_YELLOW=$(grep -c yellow $T_HOME/data/readable_responseGetPage_$TREE_PAGE.xml)
+CHANGE_FLAG_BLUE=$(grep -c blue $T_HOME/data/readable_responseGetPage_$TREE_PAGE.xml)
+CHANGE_FLAG_RED=$(grep -c red $T_HOME/data/readable_responseGetPage_$TREE_PAGE.xml)
+
 }
 function getShortPageName () {
 LONG_NAME=$1
@@ -110,19 +114,20 @@ function error_exit #Exits script in case of failure
     echo "" #new row
     echo "- ERROR : ${PROGNAME}: ${1:-"Unknown Error"}"
     echo "" #new row
-    echo "USAGE: ./editPage.sh [-]pDsTHhnI -p [PAGE_NAME]  -D [Data Center] -s [STATE] -T [TICKET_URL parenthness has to been used \"https:/#jira.intgdc.com/browse/WA-4071\"] -H/h [update HISTORY Y/N] -n [NOTE added to comment] -I #[PAGE_ID] -l [List all possible parameter values]]"
+echo "USAGE: updateTree.sh [-]pDsTHhnI  "
+echo " -p [PAGE_NAME]  -D [Data Center] -s [STATE] -T [TICKET_URL parenthness has to been used [https:/#jira.intgdc.com/browse/WA-4071] -H/h [update HISTORY Y/N] -n [NOTE added to comment] -I [PAGE_ID] -l [List all possible parameter values]"
     exit 1
 }
 #----------------------------------------------------------------------
 
 function parentPageStatus ()
 {
-CURRENT_STATUS=$1
-echo "currentStatus $CURRENT_STATUS"
-if [ $CURRENT_STATUS == "DOWN" ]; then
-STATE="PROBLEM"
+UPDATE_STATUS=$1
+
+if [ $UPDATE_STATUS == "DOWN" ]; then
+    STATE="PROBLEM"
 else
-STATE="$CURRENT_STATUS"
+    STATE="$UPDATE_STATUS"
 fi
 }
 #----------------------------------------------------------------------
@@ -138,9 +143,6 @@ T_HOME=$TOOL_HOME
 CUSER=$CONF_USER
 CAPI_URL=$API_URL
 
-checkToken  #check authentication token
-./getSpaceInfo.sh
-
 #Checking number of parameters
 if [ $# -eq 0 ]; then
     error_exit "$LINENO: Sorry, NO parametr given."
@@ -153,22 +155,28 @@ while [ $# -gt 0 ]
 do
     P=$1
     case $P in
-        -p) PAGE=$2 ;;
-        -s) STATE=$2 ;;
-        -T) TICKET_URL=$2 ;;
-        -H) HISTORY_FLAG=false ;;
-        -n) NOTE=$2 ;;
-        -l) LIST_FLAG=true ;;
-        -D) DC=$2  ;;
-        -I)PAGE_ID=$2 ;;
-        -h) #_TODO_ run help
-;;
-        -help) #_TODO_ run help
-;;
+            -p) PAGE=$2 ;;
+            -s) STATE=$2 ;;
+            -T) TICKET_URL=$2 ;;
+            -H) HISTORY_FLAG=false ;;
+            -n) NOTE=$2 ;;
+            -l) LIST_FLAG=true ;;
+            -D) DC=$2  ;;
+            -I)PAGE_ID=$2 ;;
+            -h) #_TODO_ run help
+            ;;
+            -help) #_TODO_ run help
+            ;;
     esac
 shift
 done
 
+
+checkToken  #check authentication token
+
+./getSpaceInfo.sh #retreiving informations about space tree of pages
+
+#update history
 if [ $HISTORY_FLAG]; then
     echo "withou history"
     ./editPage.sh -p $PAGE -s $STATE -D $DC -T $TICKET_URL -H
@@ -176,21 +184,26 @@ else
     ./editPage.sh -p $PAGE -s $STATE -D $DC -T $TICKET_URL
 fi
 
+
+#Get Parent Page informations
 PARENT_ID=`xmllint --xpath "//getPageReturn/parentId/text()" $T_HOME/data/responseGetPage_$PAGE.xml`
 PAGE_NAME=`xmllint --xpath "//getPageReturn/title/text()" $T_HOME/data/responseGetPage_$PAGE.xml`
 ./getPageInfo.sh -i $PARENT_ID
 
 
 PARENT_PAGE_NAME=`xmllint --xpath "//getPageReturn/title/text()" $T_HOME/data/responseGetPage_$PARENT_ID.xml`
-echo "" #new row
-echo "- Info : $LINENO: $PROGNAME : Parent page to udate: "
-echo "Page id: $PARENT_ID"
+
 getShortPageName "$PARENT_PAGE_NAME"
-echo "Page Name: $PARENT_PAGE_NAME"
+
+echo "Page Name: $LONG_NAME"
+echo "Page Short Name: $PARENT_PAGE_NAME"
+
+#retrieve status of parent page
 parentPageStatus $STATE
-echo "New page state: $STATE"
 echo "" #new row
-echo "Do you want to update $PARENT_PAGE_NAME too? Yy/Nn"
+echo "Question: Do you want to update $LONG_NAME to state $STATE too? Yy/Nn:  "
+echo "" #new row
+echo -n "::Your choice >>> "
 
 read PARENT
 case $PARENT in
@@ -204,31 +217,43 @@ case $PARENT in
     ;;
 esac
 
+echo "" #new row
+echo "- Info : $LINENO: $PROGNAME : Pages $PAGE_NAME and $LONG_NAME updated."
+echo "" #new row
+echo "- Info : $LINENO: $PROGNAME : END "
 
-getTreeState "SUBCOMPONENTS"
 
-
-
-if [ $CHANGE_FLAG_GREEN -gt 0 ]; then
-    ./summarys.sh -p SUBCOMPONENTS -s $STATE -D $DC
-else
-echo "keeping subcomponents as they are"
-fi
-
-getTreeState "COMPONENTS"
-
-if [ $CHANGE_FLAG_GREEN -gt 0 ]; then
-    ./summarys.sh -p COMPONENTS -s $STATE -D $DC
-else
-    echo "keeping subcomponents as they are"
-fi
-
-getTreeState "PLATFORM"
-if [ $CHANGE_FLAG_GREEN -gt 0 ]; then
-    ./summarys.sh -p PLATFORM -s $STATE -D $DC
-else
-echo "keeping subcomponents as they are"
-fi
+### updating subcomponents.
+#getTreeState "SUBCOMPONENTS"
+#
+#if [ $CHANGE_FLAG_GREEN -gt 0 ]; then
+#    ./summarys.sh -p SUBCOMPONENTS -s $STATE -D $DC
+#else
+#    if [ $CHANGE_FLAG_GREY -gt 0 ]; then
+#        ./summarys.sh -p SUBCOMPONENTS -s $STATE -D $DC
+#    else
+#echo "" #new row
+#echo "- Info : $LINENO: $PROGNAME : TEXT "
+#    fi
+#echo "" #new row
+#echo "- Info : $LINENO: $PROGNAME : SUBCOMPONENTS  "
+#echo "
+#fi
+#
+#getTreeState "COMPONENTS"
+#
+#if [ $CHANGE_FLAG_GREEN -gt 0 ]; then
+#    ./summarys.sh -p COMPONENTS -s $STATE -D $DC
+#else
+#    echo "keeping subcomponents as they are"
+#fi
+#
+#getTreeState "PLATFORM"
+#if [ $CHANGE_FLAG_GREEN -gt 0 ]; then
+#    ./summarys.sh -p PLATFORM -s $STATE -D $DC
+#else
+#echo "keeping subcomponents as they are"
+#fi
 
 
 

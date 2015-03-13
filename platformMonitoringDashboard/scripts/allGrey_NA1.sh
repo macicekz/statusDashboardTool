@@ -3,7 +3,7 @@
 #Set whole dashboard Grey
 # ./allGrey 
 
-./loginConfluence.sh
+
 
 ./wlogout.sh
 

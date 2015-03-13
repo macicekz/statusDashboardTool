@@ -4,8 +4,6 @@
 #Set whole dashboard Grey
 # ./allGrey 
 
-./loginConfluence.sh
-
 ./wlogout.sh
 
 ./editPage.sh -p AQE -s UNKNOWN -D NA2 -H
