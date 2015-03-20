@@ -55,11 +55,9 @@
 # Fri Mar 20 2015 - ZMA
 #   - Watch status as a URL to the Watch status page
 #   - minor fixes
+#   - ignores
 # -----------------------------
-# Fri Mar 20 2015 - ZMA
-#   - Watch status as a URL to the Watch status page
-#   - minor fixes
-# -----------------------------
+
 
 TOOL_HOME=$(pwd)
 
