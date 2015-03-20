@@ -5,6 +5,8 @@
 
 *.xcworkspacedata
 
+*.xcworkspace
+
 *user.cfg
 
 *.xcuserstate
