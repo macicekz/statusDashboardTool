@@ -50,7 +50,11 @@
 #   - logoff logging to history fixed
 #   - fixed https://github.com/macicekz/statusDashboardTool/issues/2 - Test flow
 #   - treeUpdate set for Components and Subcomponents only
-#   -
+#   - minor fixes
+# -----------------------------
+# Fri Mar 20 2015 - ZMA
+#   - Watch status as a URL to the Watch status page
+#   - minor fixes
 # -----------------------------
 TOOL_HOME=$(pwd)
 
