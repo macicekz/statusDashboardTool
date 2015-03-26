@@ -2,10 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:platformMonitoringDashboard/scripts/allGrey_ALL.sh">
-   </FileRef>
-   <FileRef
-      location = "group:platformMonitoringDashboard/scripts/allOK_ALL.sh">
+      location = "group:platformMonitoringDashboard/templates/StatusPage.html">
    </FileRef>
    <FileRef
       location = "group:README.md">

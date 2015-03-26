@@ -57,6 +57,10 @@
 #   - minor fixes
 #   - ignores
 # -----------------------------
+# Fri Mar 26 2015 - ZMA
+#   - Confirmations of update
+#   - minor fixes
+# -----------------------------
 
 
 TOOL_HOME=$(pwd)

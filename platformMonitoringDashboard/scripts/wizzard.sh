@@ -146,9 +146,9 @@ function confirmUpdate()
                     ;;
                     Y) echo "- Info : $LINENO: $PROGNAME : Proceeding ... "
                     ;;
-                    N) return 0"
+                    N) EXIT_FLAG=1 "
                     ;;
-                    n) return 0"
+                    n) rEXIT_FLAG=1 "
                     ;;
                     0) EXIT_FLAG=1 ;;
         esac
@@ -418,6 +418,7 @@ do
                     setDataCenter $EXIT_FLAG
                     echo "" #new row
                     setTicket $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     echo "" #new row
                     if [ $EXIT_FLAG -eq 0 ]; then
                         if [ $PAGE == "ALL" ]; then
@@ -440,6 +441,7 @@ do
                     setDataCenter $EXIT_FLAG
                     setTicket $EXIT_FLAG
                     setHistory $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
                         if [ $PAGE -eq 'ALL' ]; then
                             echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/All$STATE_$DC.log"
@@ -455,6 +457,7 @@ do
                 6)  setState $EXIT_FLAG
                     setWebs $EXIT_FLAG
                     setHistory $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/editWebs_$WEB.log"
                         ./editWebs.sh -w $WEB -s $STATE $TICKET_FLAG $HISTORY > ../logs/editWebs_$WEB_$DC.log
@@ -468,6 +471,7 @@ do
                     setDataCenter $EXIT_FLAG
                     setTicket $EXIT_FLAG
                     setHistory $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
 #                        echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/treeUpdate_$PAGE.log"
                         ./updateTree.sh -p $PAGE -s $STATE -D $DC $TICKET_FLAG $HISTORY #> ../logs/treeUpdate_$PAGE_$DC.log
@@ -479,6 +483,7 @@ do
                 ;;
                 11) #Release START
                     setRelease $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_START_$DC"
                         ./release.sh -s -D $DC $TICKET_FLAG $HISTORY > $T_HOME/logs/release_START_$DC.log
@@ -488,6 +493,7 @@ do
                 ;;
                 12) #Release
                     setRelease $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_END_$DC"
                         ./release.sh -e -D $DC $HISTORY > $T_HOME/logs/release_END_$DC.log
@@ -497,6 +503,7 @@ do
                 ;;
                 13) #Release START
                     setDataCenter $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_AllGrey_$DC.log"
                         ./allGrey_$DC.sh > $T_HOME/logs/release_AllGrey_$DC.log
@@ -507,6 +514,7 @@ do
                 ;;
                 17) #Release START
                     setDataCenter $EXIT_FLAG
+                    confirmUpdate $EXIT_FLAG
                     if [ $EXIT_FLAG -eq 0 ]; then
                         echo "- Info : $LINENO: $PROGNAME : Logging into $T_HOME/logs/release_AllOK_$DC.log"
                         ./allOK_$DC.sh > $T_HOME/logs/release_AllOK_$DC.log
